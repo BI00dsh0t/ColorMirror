@@ -1,21 +1,26 @@
-﻿Build started 6/4/2015 10:06:02 PM.
-     1>Project "C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\ColorMirror\ColorMirror.vcxproj" on node 2 (Build target(s)).
+﻿Build started 6/5/2015 6:30:51 PM.
+     1>Project "C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\ColorMirror\ColorMirror.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\ColorMirror.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ColorMirror.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include" /I"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\include" /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\ColorMirror.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+     1>cl : Command line warning D9007: '/Gm' requires '/Zi or /ZI'; option ignored
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include" /I"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\include" /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\ColorMirror.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ColorMirror.cpp
+     1>cl : Command line warning D9007: '/Gm' requires '/Zi or /ZI'; option ignored
          ColorMirror.cpp
-     1>c:\users\joshua\documents\visual studio 2013\projects\colormirror\colormirror\colormirror.cpp(179): warning C4244: 'argument' : conversion from 'unsigned long' to 'unsigned char', possible loss of data
+     1>ColorMirror.cpp(242): warning C4244: 'argument' : conversion from 'unsigned long' to 'unsigned char', possible loss of data
+     1>ColorMirror.cpp(318): warning C4244: 'argument' : conversion from 'unsigned long' to 'unsigned char', possible loss of data
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\Debug\ColorMirror.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\lib" "libusb-1.0.lib" LibCorsairRGB.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\Debug\ColorMirror.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\Debug\ColorMirror.lib" /MACHINE:X86 Debug\ColorMirror.res
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\Debug\ColorMirror.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86" /LIBPATH:"C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\lib" "libusb-1.0.lib" LibCorsairRGB.lib d3d9.lib d3dx9.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\Debug\ColorMirror.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\Debug\ColorMirror.lib" /MACHINE:X86 Debug\ColorMirror.res
          Debug\ColorMirror.obj
          Debug\stdafx.obj
-         ColorMirror.vcxproj -> C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\Debug\ColorMirror.exe
+         ColorMirror.vcxproj -> C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\Debug\ColorMirror.exe
        PostBuildEvent:
-         xcopy /y "C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\LibCorsairRGB.dll" "C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\Debug\"
+         xcopy /y "C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\LibCorsairRGB.dll" "C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\Debug\"
          :VCEnd
          C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\LibCorsairRGB-0.1\LibCorsairRGB.dll
          1 File(s) copied
-     1>Done Building Project "C:\Users\Joshua\Documents\Visual Studio 2013\Projects\ColorMirror\ColorMirror\ColorMirror.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\ColorMirror\ColorMirror.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.44
+Time Elapsed 00:00:13.39

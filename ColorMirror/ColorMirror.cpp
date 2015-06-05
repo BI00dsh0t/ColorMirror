@@ -6,6 +6,8 @@
 #include "LibCorsairRGB\LibCorsairRGB.h"
 #include <iostream>
 #include <stdlib.h>
+#include <d3d9.h>
+#include <D3dx9tex.h>
 
 #include "RzErrors.h"
 #include "RzChromaSDKTypes.h"
@@ -19,7 +21,9 @@ using namespace std;
 typedef RZRESULT(*INIT)(void);
 typedef RZRESULT(*UNINIT)(void);
 typedef RZRESULT(*CREATEEFFECT)(RZDEVICEID DeviceId, ChromaSDK::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
-typedef RZRESULT(*CREATEKEYBOARDCUSTOMEFFECTS)(RZSIZE NumEffects, ChromaSDK::Keyboard::CUSTOM_KEY_EFFECT_TYPE *pCustomEffects, RZEFFECTID *pEffectId);
+typedef RZRESULT(*CREATEKEYBOARDCUSTOMEFFECTS)(ChromaSDK::Keyboard::CUSTOM_KEY_EFFECT_TYPE *pCustomEffects, RZEFFECTID *pEffectId);
+typedef RZRESULT(*CREATEKEYBOARDCUSTOMGRIDEFFECTS)(ChromaSDK::Keyboard::CUSTOM_GRID_EFFECT_TYPE CustomEffects, RZEFFECTID *pEffectId);
+typedef RZRESULT (*CREATEKEYBOARDEFFECT)(ChromaSDK::Keyboard::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID * pEffectId);
 typedef RZRESULT(*CREATEMOUSEEFFECT)(ChromaSDK::Mouse::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 typedef RZRESULT(*REGISTEREVENTNOTIFICATION)(HWND hWnd);
 typedef RZRESULT(*UNREGISTEREVENTNOTIFICATION)(void);
@@ -30,15 +34,23 @@ typedef RZRESULT(*UNREGISTEREVENTNOTIFICATION)(void);
 #define CHROMASDKDLL        _T("RzChromaSDK.dll")
 #endif
 
+#define	ErrorMessage(x)		MessageBox(NULL,x,"Error",MB_OK|MB_ICONERROR)
+#define BITSPERPIXEL		32
+
+IDirect3D9*			g_pD3D = NULL;
+IDirect3DDevice9*	g_pd3dDevice = NULL;
+IDirect3DSurface9*	g_pSurface = NULL;
 HWND hWnd = NULL;
 HMODULE hModule = NULL;
-void initKeyboard();
-void initScreenCap();
 void closeConnection();
 HBITMAP getGetScreenBmp(HDC);
 DWORD WINAPI LightThread(LPVOID);
 void InitChromaSDK();
 void UninitChromaSDK();
+HRESULT	InitD3D(HWND);
+void initDX9ScreenCap();
+void initKeyboard();
+void initScreenCap();
 
 int razer = 1;
 int chroma = 2;
@@ -46,12 +58,13 @@ int type = -1;
 
 int main(){
 	hWnd = GetConsoleWindow();
-	while (type < 0 || type > 1){
+	InitD3D(hWnd);
+	while (type < 1 || type > 2){
 		cout << "What keyboard do you have?" << endl;
 		cout << "1: Razer k70 rgb" << endl << "2: Razer Blackwidow Chroma" << endl;
 		cin >> type;
 
-		if (type < 0 || type > 1){
+		if (type < 1 || type > 2){
 			cout << "Invalid input... try again" << endl;
 		}
 	}
@@ -91,14 +104,19 @@ void initKeyboard(){
 	}
 	else if (type == 2){
 		InitChromaSDK();
-		CREATEEFFECT CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");		CUSTOM_GRID_EFFECT_TYPE Grid = {};
-
-		for (int i = 0; i < 6; i++){
+		CREATEKEYBOARDCUSTOMGRIDEFFECTS CreateKeyboardCustomEffects = (CREATEKEYBOARDCUSTOMGRIDEFFECTS)GetProcAddress(hModule, "CreateKeyboardCustomGridEffects");
+		if (CreateKeyboardCustomEffects == NULL)
+		{
+			cout << "Effect failed" << endl;
+			return;
+		}
+		CUSTOM_GRID_EFFECT_TYPE Grid = {};		
+		for (int i = 0; i < 7; i++){
 			for (int j = 0; j < 22; j++){
-				Grid.Key[i][j] = RGB(0, 0, 0);
+				Grid.Key[i][j] = RGB(255, 0, 0);
 			}
 		}
-		CreateEffect(BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Grid, nullptr);
+		CreateKeyboardCustomEffects(Grid, NULL);
 	}
 
 
@@ -125,6 +143,116 @@ HBITMAP GetScreenBmp(HDC hdc) {
 	SelectObject(hCaptureDC, hOld); // always select the previously selected object once done
 	DeleteDC(hCaptureDC);
 	return hBitmap;
+}
+
+HRESULT	InitD3D(HWND hWnd)
+{
+	D3DDISPLAYMODE	ddm;
+	D3DPRESENT_PARAMETERS	d3dpp;
+
+	if ((g_pD3D = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
+	{
+		//ErrorMessage("Unable to Create Direct3D ");
+		return E_FAIL;
+	}
+
+	if (FAILED(g_pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &ddm)))
+	{
+		//ErrorMessage("Unable to Get Adapter Display Mode");
+		return E_FAIL;
+	}
+
+	ZeroMemory(&d3dpp, sizeof(D3DPRESENT_PARAMETERS));
+
+	RECT desktop;
+	const HWND hDesktop = GetDesktopWindow();
+	GetWindowRect(hDesktop, &desktop);
+	// The top left corner will have coordinates (0,0)
+	// and the bottom right corner will have coordinates
+	// (horizontal, vertical)
+	int horizontal = desktop.right;
+	int vertical = desktop.bottom;
+
+	d3dpp.Windowed = true;
+	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
+	d3dpp.BackBufferHeight =  vertical = desktop.bottom = ddm.Height;
+	d3dpp.BackBufferWidth = horizontal = desktop.right = ddm.Width;
+	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dpp.hDeviceWindow = hWnd;
+	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+
+	if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &g_pd3dDevice)))
+	{
+		//ErrorMessage("Unable to Create Device");
+		return E_FAIL;
+	}
+
+	if (FAILED(g_pd3dDevice->CreateOffscreenPlainSurface(ddm.Width, ddm.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &g_pSurface, NULL)))
+	{
+		//ErrorMessage("Unable to Create Surface");
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+void initDX9ScreenCap(){
+	g_pd3dDevice->GetFrontBufferData(0, g_pSurface);
+	LPD3DXBUFFER buffer;
+	D3DXSaveSurfaceToFileInMemory(&buffer, D3DXIFF_BMP, g_pSurface, NULL, NULL);
+	DWORD imSize = buffer->GetBufferSize();
+	void* pix = buffer->GetBufferPointer();
+
+	BYTE* lpPixels = (BYTE*)pix;
+
+	RECT desktop;
+	const HWND hDesktop = GetDesktopWindow();
+	GetWindowRect(hDesktop, &desktop);
+	// The top left corner will have coordinates (0,0)
+	// and the bottom right corner will have coordinates
+	// (horizontal, vertical)
+	int horizontal = desktop.right;
+	int vertical = desktop.bottom;
+
+	unsigned long red = 0, green = 0, blue = 0, count = 0;
+
+	for (int i = 0; i < horizontal; i++)
+	{
+		for (int j = 0; j < vertical; j++)
+		{
+			blue += (lpPixels + count)[2];
+			green += (lpPixels + count)[3];
+			red += (lpPixels + count)[0];
+			count += 4;
+		}
+	}
+
+	red = red / (horizontal*vertical);
+	green = green / (horizontal*vertical);
+	blue = blue / (horizontal*vertical);
+
+	if (type == 1) {
+		for (int x = 0; x < 22; x++) {
+			for (int y = 0; y < 7; y++) {
+				lcrgb_set_position(x, y, red, green, blue);
+			}
+		}
+		lcrgb_flush_light_buffer();
+	}
+	else if (type == 2){
+		CREATEKEYBOARDCUSTOMGRIDEFFECTS CreateKeyboardCustomGridEffects = (CREATEKEYBOARDCUSTOMGRIDEFFECTS)GetProcAddress(hModule, "CreateKeyboardCustomGridEffects");
+		CUSTOM_GRID_EFFECT_TYPE Grid = {};
+		for (int i = 0; i < 7; i++){
+			for (int j = 0; j < 23; j++){
+				Grid.Key[i][j] = RGB(red, green, blue);
+			}
+		}
+		CreateKeyboardCustomGridEffects(Grid, NULL);
+	}
+	buffer->Release();
 }
 
 void initScreenCap(){
@@ -167,8 +295,8 @@ void initScreenCap(){
 	{
 		for (int j = 0; j < vertical; j++)
 		{
-			green += (lpPixels + count)[0];
-			blue += (lpPixels + count)[1];
+			blue += (lpPixels + count)[0];
+			green += (lpPixels + count)[1];
 			red += (lpPixels + count)[2];
 			count += 4;
 		}
@@ -181,22 +309,21 @@ void initScreenCap(){
 	if (type == 1) {
 		for (int x = 0; x < 22; x++) {
 			for (int y = 0; y < 7; y++) {
-				lcrgb_set_position(x, y, red, blue, green);
+				lcrgb_set_position(x, y, red, green, blue);
 			}
 		}
 		lcrgb_flush_light_buffer();
 	}
 	else if (type == 2){
-		InitChromaSDK();
-		CREATEEFFECT CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");		CUSTOM_GRID_EFFECT_TYPE Grid = {};
-
-		for (int i = 0; i < 6; i++){
-			for (int j = 0; j < 22; j++){
+		CREATEKEYBOARDCUSTOMGRIDEFFECTS CreateKeyboardCustomGridEffects = (CREATEKEYBOARDCUSTOMGRIDEFFECTS)GetProcAddress(hModule, "CreateKeyboardCustomGridEffects");
+		CUSTOM_GRID_EFFECT_TYPE Grid = {};
+		for (int i = 0; i < 7; i++){
+			for (int j = 0; j < 23; j++){
 				Grid.Key[i][j] = RGB(red, blue, green);
 			}
 		}
-		CreateEffect(BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Grid, nullptr);
-	}
+			CreateKeyboardCustomGridEffects(Grid, NULL);
+		}
 
 	
 
@@ -209,7 +336,8 @@ DWORD WINAPI LightThread(LPVOID lpParameter)
 {
 
 	while (true){
-		initScreenCap();
+		//initScreenCap();
+		initDX9ScreenCap();
 	}
 	/*for (int t = 0; t < 50000; t++) {
 		for (int x = 0; x < 22; x++) {
@@ -235,6 +363,7 @@ void InitChromaSDK()
 			RZRESULT rzResult = Init();
 			if (rzResult == RZRESULT_SUCCESS)
 			{
+				cout << "Module loaded" << endl;
 				REGISTEREVENTNOTIFICATION RegisterEventNotification = (REGISTEREVENTNOTIFICATION)GetProcAddress(hModule, "RegisterEventNotification");
 				if (RegisterEventNotification)
 				{
