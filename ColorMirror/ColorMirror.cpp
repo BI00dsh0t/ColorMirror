@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "ColorMirror.h"
-#include "LibCorsairRGB\LibCorsairRGB.h"
+#include "../LibCorsairRGB/Keyboard.h"
 #include <iostream>
 #include <stdlib.h>
 #include <d3d9.h>
@@ -16,6 +16,7 @@
 using namespace ChromaSDK;
 using namespace ChromaSDK::Keyboard;
 using namespace ChromaSDK::Mouse;
+
 using namespace std;
 
 typedef RZRESULT(*INIT)(void);
@@ -61,9 +62,8 @@ int main(){
 	InitD3D(hWnd);
 	while (type < 1 || type > 2){
 		cout << "What keyboard do you have?" << endl;
-		cout << "1: Razer k70 rgb" << endl << "2: Razer Blackwidow Chroma" << endl;
+		cout << "1: Corsair RGB Keyboard (Any variant)" << endl << "2: Razer Blackwidow Chroma" << endl;
 		cin >> type;
-
 		if (type < 1 || type > 2){
 			cout << "Invalid input... try again" << endl;
 		}
@@ -72,7 +72,7 @@ int main(){
 	cout << "You chose the ";
 
 	if (type == 1){
-		cout << "Corsair k70 rgb";
+		cout << "Corsair RGB";
 		atexit(closeConnection);
 	}
 	else if (type == 2){
@@ -95,11 +95,10 @@ int main(){
 
 void initKeyboard(){
 	if (type == 1){
-		lcrgb_set_verbosity_level(0);
-		lcrgb_initialise();
-		lcrgb_set_keymap(lcrgb_ANSI_US);
+		CorsairRGB::Keyboard::Init();
+		CorsairRGB::Keyboard::SetKeyMap(CorsairRGB::Keymaps::US);
 		for (unsigned char key = 0; key < 144; key++){
-			lcrgb_set_key_code(key, 0, 0, 0);
+			CorsairRGB::Keyboard::SetKeyCode(key, 0, 0, 0);
 		}
 	}
 	else if (type == 2){
@@ -126,7 +125,8 @@ void initKeyboard(){
 }
 
 void closeConnection(){
-	lcrgb_deinitialise();
+	CorsairRGB::Keyboard::RestoreLighting();
+	CorsairRGB::Keyboard::Shutdown();
 }
 
 HBITMAP GetScreenBmp(HDC hdc) {
@@ -235,12 +235,10 @@ void initDX9ScreenCap(){
 	blue = blue / (horizontal*vertical);
 
 	if (type == 1) {
-		for (int x = 0; x < 22; x++) {
-			for (int y = 0; y < 7; y++) {
-				lcrgb_set_position(x, y, red, green, blue);
-			}
+		for (unsigned char key = 0; key < 144; key++){
+			CorsairRGB::Keyboard::SetKeyCode(key, red, green, blue);
 		}
-		lcrgb_flush_light_buffer();
+		CorsairRGB::Keyboard::FlushLightBuffer();
 	}
 	else if (type == 2){
 		CREATEKEYBOARDCUSTOMGRIDEFFECTS CreateKeyboardCustomGridEffects = (CREATEKEYBOARDCUSTOMGRIDEFFECTS)GetProcAddress(hModule, "CreateKeyboardCustomGridEffects");
@@ -307,12 +305,10 @@ void initScreenCap(){
 	blue = blue / (horizontal*vertical);
 
 	if (type == 1) {
-		for (int x = 0; x < 22; x++) {
-			for (int y = 0; y < 7; y++) {
-				lcrgb_set_position(x, y, red, green, blue);
-			}
+		for (unsigned char key = 0; key < 144; key++){
+			CorsairRGB::Keyboard::SetKeyCode(key, red, green, blue);
 		}
-		lcrgb_flush_light_buffer();
+		CorsairRGB::Keyboard::FlushLightBuffer();
 	}
 	else if (type == 2){
 		CREATEKEYBOARDCUSTOMGRIDEFFECTS CreateKeyboardCustomGridEffects = (CREATEKEYBOARDCUSTOMGRIDEFFECTS)GetProcAddress(hModule, "CreateKeyboardCustomGridEffects");

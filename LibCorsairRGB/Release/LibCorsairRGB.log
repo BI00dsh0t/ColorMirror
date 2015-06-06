@@ -1,0 +1,19 @@
+﻿Build started 6/5/2015 9:22:46 PM.
+     1>Project "C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\LibCorsairRGB\LibCorsairRGB.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt keymaps.cpp Keyboard.cpp Mouse.cpp USBHelper.cpp
+         keymaps.cpp
+         Keyboard.cpp
+         Mouse.cpp
+         USBHelper.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\Release\LibCorsairRGB.lib" /NOLOGO /LTCG Release\keymaps.obj
+         Release\Keyboard.obj
+         Release\Mouse.obj
+         Release\USBHelper.obj
+         LibCorsairRGB.vcxproj -> C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\Release\LibCorsairRGB.lib
+     1>Done Building Project "C:\Users\Joshua\documents\visual studio 2013\Projects\ColorMirror\LibCorsairRGB\LibCorsairRGB.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.31

@@ -1,0 +1,19 @@
+﻿Build started 6/5/2015 7:51:51 PM.
+     1>Project "C:\Users\Joshua\Downloads\LogiLed2Corsair-master\LibCorsairRGB\LibCorsairRGB.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt keymaps.cpp Keyboard.cpp Mouse.cpp USBHelper.cpp
+         keymaps.cpp
+         Keyboard.cpp
+         Mouse.cpp
+         USBHelper.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\Lib.exe /OUT:"C:\Users\Joshua\Downloads\LogiLed2Corsair-master\x64\Release\LibCorsairRGB.lib" /NOLOGO /MACHINE:X64 /LTCG x64\Release\keymaps.obj
+         x64\Release\Keyboard.obj
+         x64\Release\Mouse.obj
+         x64\Release\USBHelper.obj
+         LibCorsairRGB.vcxproj -> C:\Users\Joshua\Downloads\LogiLed2Corsair-master\x64\Release\LibCorsairRGB.lib
+     1>Done Building Project "C:\Users\Joshua\Downloads\LogiLed2Corsair-master\LibCorsairRGB\LibCorsairRGB.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.97
